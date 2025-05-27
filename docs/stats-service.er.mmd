@@ -1,0 +1,32 @@
+erDiagram
+    STAT_EVENT {
+        UUID id
+        string event_type
+        string entity_type
+        UUID entity_id
+        UUID user_id
+        datetime occurred_at
+        string metadata
+    }
+
+    AGGREGATED_STATS {
+        UUID id
+        string entity_type
+        UUID entity_id
+        int views
+        int likes
+        int comments
+        datetime calculated_at
+    }
+
+    USER_ACTIVITY {
+        UUID id
+        UUID user_id
+        int daily_views
+        int daily_likes
+        int daily_comments
+        date activity_date
+    }
+
+    STAT_EVENT ||--o{ AGGREGATED_STATS : "aggregated to"
+    STAT_EVENT ||--o{ USER_ACTIVITY : "summarized for"

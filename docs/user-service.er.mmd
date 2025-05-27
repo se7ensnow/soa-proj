@@ -1,0 +1,41 @@
+erDiagram
+    USER {
+        UUID id
+        string email
+        string hashed_password
+        string username
+        datetime created_at
+        boolean is_active
+    }
+
+    ROLE {
+        UUID id
+        string name
+        string description
+    }
+
+    USER_ROLE {
+        UUID user_id
+        UUID role_id
+    }
+
+    SESSION {
+        UUID id
+        UUID user_id
+        string refresh_token
+        datetime created_at
+        datetime expires_at
+    }
+
+    PASSWORD_RESET {
+        UUID id
+        UUID user_id
+        string reset_token
+        datetime expires_at
+        boolean used
+    }
+
+    USER ||--o{ USER_ROLE : "assigned"
+    ROLE ||--o{ USER_ROLE : "included in"
+    USER ||--o{ SESSION : "has"
+    USER ||--o{ PASSWORD_RESET : "can request"
