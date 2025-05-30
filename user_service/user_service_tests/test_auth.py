@@ -52,11 +52,12 @@ def test_login_success(client):
         "username": "testuser",
         "password": "StrongPass123!"
     }
-    response = client.post("/auth/login", json=login_payload)
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    response = client.post("/auth/login", data=login_payload, headers=headers)
     assert response.status_code == 200
     data = response.json()
-    assert data["message"] == "Login successful"
-    assert "user_id" in data
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
 
 def test_login_wrong_password(client):
     reg_payload = {
@@ -71,8 +72,9 @@ def test_login_wrong_password(client):
         "username": "testuser",
         "password": "WrongPassword!"
     }
-    response = client.post("/auth/login", json=payload)
-    assert response.status_code == 400
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    response = client.post("/auth/login", data=payload, headers=headers)
+    assert response.status_code == 401
     assert "Incorrect password" in response.text
 
 def test_login_wrong_username(client):
@@ -88,6 +90,7 @@ def test_login_wrong_username(client):
         "username": "wronguser",
         "password": "StrongPass123!"
     }
-    response = client.post("/auth/login", json=payload)
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    response = client.post("/auth/login", data=payload, headers=headers)
     assert response.status_code == 404
     assert "User not found" in response.text

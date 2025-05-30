@@ -1,6 +1,7 @@
-from user_service_app.database import Base
 from sqlalchemy import Column, Integer, String, Date, DateTime
 from sqlalchemy.sql import func
+
+from user_service_app.database import Base
 
 
 class User(Base):

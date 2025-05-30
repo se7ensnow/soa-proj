@@ -1,18 +1,137 @@
 services:
-  test-db:
+  test-user-db:
     image: postgres:15
-    ports:
-      - "5433:5432"
     environment:
       POSTGRES_USER: test_user
       POSTGRES_PASSWORD: test_password
-      POSTGRES_DB: test_db
+      POSTGRES_DB: test_user_db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test_user -d test_user_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"
+    networks:
+      - test-net
+
+  test-post-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_post_db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test_user -d test_post_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5434:5432"
+    networks:
+      - test-net
+
+  test-user-db-api:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_user_db_api
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d test_user_db_api"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5435:5432"
+    networks:
+      - test-net
+
+  test-post-db-api:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_post_db_api
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test_user -d test_post_db_api" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5436:5432"
+    networks:
+      - test-net
 
   user-service:
-    build: ./user_service
+    build:
+      context: ./user_service
+    command: uvicorn user_service_app.main:app --host 0.0.0.0 --port 8000
+    restart: always
     environment:
-      DATABASE_URL: postgresql://test_user:test_password@test-db:5432/test_db
+      DATABASE_URL: postgresql://test_user:test_password@test-user-db-api:5432/test_user_db_api
     depends_on:
-      - test-db
+      test-user-db-api:
+        condition: service_healthy
     ports:
       - "8001:8000"
+    networks:
+      - test-net
+
+  post-service:
+    build:
+      context: ./post_service
+    command: ["python", "-u", "post_service_app/main.py"]
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@test-post-db-api:5432/test_post_db_api
+    depends_on:
+      test-post-db-api:
+        condition: service_healthy
+    ports:
+      - "50051:50051"
+    networks:
+      - test-net
+
+  test-user-service:
+    build:
+      context: ./user_service
+      dockerfile: Dockerfile.test
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@test-user-db:5432/test_user_db
+    depends_on:
+      test-user-db:
+        condition: service_healthy
+    networks:
+      - test-net
+
+  test-post-service:
+    build:
+      context: ./post_service
+      dockerfile: Dockerfile.test
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@test-post-db:5432/test_post_db
+      POST_SERVICE_GRPC_URL: test-post-service:50051
+    depends_on:
+      test-post-db:
+        condition: service_healthy
+    networks:
+      - test-net
+
+  test-api-gateway:
+    build:
+      context: ./api_gateway
+      dockerfile: Dockerfile.test
+    environment:
+      USER_SERVICE_URL: http://user-service:8000
+      POST_SERVICE_GRPC_URL: post-service:50051
+      USER_SERVICE_TEST_DATABASE_URL: postgresql://test_user:test_password@test-user-db-api:5432/test_user_db_api
+      POST_SERVICE_TEST_DATABASE_URL: postgresql://test_user:test_password@test-post-db-api:5432/test_post_db_api
+    depends_on:
+      - user-service
+      - post-service
+    networks:
+      - test-net
+
+networks:
+  test-net:

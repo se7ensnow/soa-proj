@@ -1,9 +1,10 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
 from user_service_app.crud import update_user
 from user_service_app.database import get_db
 from user_service_app.models import User
 from user_service_app.schemas import UserOut, UserUpdate
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 
 router = APIRouter()
 
