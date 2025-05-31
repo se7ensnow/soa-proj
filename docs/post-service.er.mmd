@@ -1,0 +1,37 @@
+erDiagram
+    POST {
+        UUID id
+        UUID author_id
+        string title
+        string content
+        boolean published
+        datetime created_at
+        datetime updated_at
+    }
+
+    COMMENT {
+        UUID id
+        UUID post_id
+        UUID author_id
+        UUID parent_comment_id
+        string content
+        datetime created_at
+        boolean is_deleted
+    }
+
+    USER_POST_LIKE {
+        UUID user_id
+        UUID post_id
+        datetime liked_at
+    }
+
+    USER_COMMENT_LIKE {
+        UUID user_id
+        UUID comment_id
+        datetime liked_at
+    }
+
+    POST ||--o{ COMMENT : "has many"
+    COMMENT ||--o{ COMMENT : "replies to"
+    POST ||--o{ USER_POST_LIKE : "liked by"
+    COMMENT ||--o{ USER_COMMENT_LIKE : "liked by"

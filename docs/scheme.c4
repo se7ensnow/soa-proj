@@ -1,0 +1,95 @@
+specification {
+  element person {
+        style {
+            shape person
+            color green
+        }
+  }
+  element softwareSystem
+  element ui
+  element container
+}
+
+model {
+  user = person "Пользователь" "Пользователь социальной сети"
+
+  uiService = ui "UI" "Интерфейс социальной сети"
+
+  socialNetwork = softwareSystem "Social Network" {
+    apiGateway = container "API Gateway" {
+      description "Принятие запросов от UI и маршрутизация по другим сервисам"
+      technology "Python, FastAPI"
+    }
+
+    userService = container "User Service" {
+      description "Регистрация, аутентификация и хранение информации о пользователях"
+      technology "Python, FastAPI"
+    }
+
+    statsService = container "Stats Service" {
+      description "Подсчёт лайков, просмотров, комментариев"
+      technology "Python, FastAPI"
+    }
+
+    postService = container "Post Service" {
+      description "Управление постами и комментариями"
+      technology "Python, FastAPI"
+    }
+
+    broker = container "Message Broker" {
+      description "Передача событий между сервисами"
+      technology "Kafka"
+      style {
+        shape queue
+      }
+    }
+
+    usersDB = container "Users Database" {
+      description "Хранение информации о пользователях"
+      technology "PostgreSQL"
+      style {
+        shape cylinder
+      }
+    }
+
+    statsDB = container "Stats Database" {
+      description "Хранение статистических данных"
+      technology "ClickHouse"
+      style {
+        shape cylinder
+      }
+    }
+
+    postsDB = container "Posts Database" {
+      description "Хранение постов и комментариев"
+      technology "PostgreSQL"
+      style {
+        shape cylinder
+      }
+    }
+
+    user -> uiService "Взаимодействует" "HTTPS"
+    uiService -> socialNetwork.apiGateway "Отправляет запросы" "REST/JSON"
+    socialNetwork.apiGateway -> socialNetwork.userService "Обрабатывает регистрацию и аутентификацию" "REST/JSON"
+    socialNetwork.apiGateway -> socialNetwork.postService "Работа с постами и комментариями" "REST/JSON"
+    socialNetwork.apiGateway -> socialNetwork.statsService "Запрос статистики" "REST/JSON"
+
+    socialNetwork.userService -> socialNetwork.usersDB "Читает/пишет информацию о пользователях" "SQL"
+    socialNetwork.postService -> socialNetwork.postsDB "Читает/пишет информацию о постах/комменариях" "SQL"
+    socialNetwork.statsService -> socialNetwork.statsDB "Читает/пишет статистику по постам и комментариям" "ClickHouse SQL"
+
+    socialNetwork.postService -> socialNetwork.broker "Отправляет события (лайки, просмотры, комментарии)" "Kafka"
+    socialNetwork.broker -> socialNetwork.statsService "Передаёт события (лайки, просмотры, комментарии)" "Kafka subscription"
+  }
+}
+
+views {
+  view index {
+    include *
+  }
+
+
+  view of socialNetwork {
+    include *
+	}
+}
