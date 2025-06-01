@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: user_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpass
+      POSTGRES_DB: users_db
+    volumes:
+      - user_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  user-service:
+    build: ./user_service
+    container_name: user-service
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://admin:adminpass@postgres:5432/users_db
+    ports:
+      - "8001:8000"
+
+  api-gateway:
+    build: ./api_gateway
+    container_name: api-gateway
+    restart: always
+    depends_on:
+      - user-service
+    environment:
+      USER_SERVICE_URL: http://user-service:8000
+    ports:
+      - "8000:8000"
+
+volumes:
+  user_pgdata:
