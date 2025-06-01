@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from typing import Optional
+
 from pydantic import BaseModel, EmailStr, field_validator
 
 
@@ -38,6 +39,5 @@ class UserOut(BaseModel):
     class ConfigDict:
         from_attributes = True
 
-class LoginRequest(BaseModel):
-    username: str
-    password: str
+class Token(BaseModel):
+    access_token: str

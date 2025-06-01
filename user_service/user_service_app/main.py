@@ -1,6 +1,7 @@
+from fastapi import FastAPI
+
 from user_service_app.database import Base, engine
 from user_service_app.routers import auth, users
-from fastapi import FastAPI
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(

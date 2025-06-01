@@ -1,7 +1,8 @@
-from user_service_app.models import User
-from user_service_app.schemas import UserCreate, UserUpdate
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
+
+from user_service_app.models import User
+from user_service_app.schemas import UserCreate, UserUpdate
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
