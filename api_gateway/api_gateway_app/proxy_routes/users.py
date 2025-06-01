@@ -42,7 +42,7 @@ async def proxy_login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 users_router = APIRouter()
 
-@users_router.get("/{user_id}")
+@users_router.get("/get/{user_id}")
 async def proxy_get_user(user_id: int):
     async with httpx.AsyncClient() as client:
         try:

@@ -1,0 +1,5 @@
+docker-compose -f docker-compose.test.yml up -d zookeeper kafka test-user-db test-post-db test-user-db-api test-post-db-api user-service post-service
+docker-compose -f docker-compose.test.yml up test-user-service test-post-service test-api-gateway --build
+docker-compose -f docker-compose.test.yml down
+docker-compose up --build
+docker-compose down

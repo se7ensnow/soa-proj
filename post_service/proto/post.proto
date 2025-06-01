@@ -8,6 +8,11 @@ service PostService {
   rpc UpdatePost (UpdatePostRequest) returns (PostResponse);
   rpc DeletePost (DeletePostRequest) returns (EmptyResponse);
   rpc ListPosts (ListPostsRequest) returns (ListPostsResponse);
+
+  rpc ViewPost (ViewPostRequest) returns (EmptyResponse);
+  rpc LikePost (LikePostRequest) returns (EmptyResponse);
+  rpc AddComment (AddCommentRequest) returns (CommentResponse);
+  rpc ListComments (ListCommentsRequest) returns (ListCommentsResponse);
 }
 
 message CreatePostRequest {
@@ -51,6 +56,8 @@ message PostResponse {
   string updated_at = 6;
   bool is_private = 7;
   repeated string tags = 8;
+  int32 likes_count = 9;
+  int32 views_count = 10;
 }
 
 message ListPostsResponse {
@@ -59,3 +66,38 @@ message ListPostsResponse {
 }
 
 message EmptyResponse {}
+
+message ViewPostRequest {
+    int32 post_id = 1;
+    int32 user_id = 2;
+}
+
+message LikePostRequest {
+    int32 post_id = 1;
+    int32 user_id = 2;
+}
+
+message AddCommentRequest {
+    int32 post_id = 1;
+    int32 user_id = 2;
+    string content = 3;
+}
+
+message CommentResponse {
+    int32 id = 1;
+    int32 post_id = 2;
+    int32 user_id = 3;
+    string content = 4;
+    string created_at = 5;
+}
+
+message ListCommentsRequest {
+    int32 post_id = 1;
+    int32 page = 2;
+    int32 size = 3;
+}
+
+message ListCommentsResponse {
+    repeated CommentResponse comments = 1;
+    int32 total = 2;
+}

@@ -1,0 +1,274 @@
+{
+  "info": {
+    "_postman_id": "f2345678-aaaa-bbbb-cccc-123456789000",
+    "name": "SOA Project API Gateway",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"testuser@example.com\",\n    \"password\": \"StrongPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/register",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "testuser"
+                },
+                {
+                  "key": "password",
+                  "value": "StrongPass123!"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"token\", jsonData.access_token);",
+                  "console.log(\"Token set: \", jsonData.access_token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Example Post\",\n    \"description\": \"This is an example post\",\n    \"is_private\": false,\n    \"tags\": [\"example\", \"post\"]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/posts/create",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "posts",
+                "create"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/posts/list?page=1&size=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "posts",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Post by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/posts/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "posts",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Like Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/posts/like/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "posts",
+                "like",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Comment Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"This is a comment.\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/posts/comment/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "posts",
+                "comment",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Comments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/posts/comments/1?page=1&size=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "posts",
+                "comments",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

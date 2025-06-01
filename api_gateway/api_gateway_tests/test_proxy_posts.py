@@ -67,7 +67,7 @@ def test_delete_post(api_client, auth_headers):
     response = api_client.delete(f"/posts/delete/{post_id}", headers=auth_headers)
     assert response.status_code == 200
 
-    get_response = api_client.get(f"/posts/{post_id}", headers=auth_headers)
+    get_response = api_client.get(f"/posts/get/{post_id}", headers=auth_headers)
     assert get_response.status_code == 404
 
 def test_list_posts(api_client, auth_headers):
@@ -86,3 +86,41 @@ def test_list_posts(api_client, auth_headers):
     assert "posts" in data
     assert "total" in data
     assert data["total"] >= 3
+
+def test_view_post(api_client, auth_headers):
+    post_id = test_create_post(api_client, auth_headers)
+    response = api_client.post(f"/posts/view/{post_id}", headers=auth_headers)
+    assert response.status_code == 200
+
+def test_like_post(api_client, auth_headers):
+    post_id = test_create_post(api_client, auth_headers)
+    response = api_client.post(f"/posts/like/{post_id}", headers=auth_headers)
+    assert response.status_code == 200
+
+def test_comment_post(api_client, auth_headers):
+    post_id = test_create_post(api_client, auth_headers)
+    payload = {
+        "content": "Great post!"
+    }
+    response = api_client.post(f"/posts/comment/{post_id}", json=payload, headers=auth_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["content"] == payload["content"]
+    assert "id" in data
+
+def test_list_comments(api_client, auth_headers):
+    post_id = test_create_post(api_client, auth_headers)
+    for i in range(3):
+        payload = {
+            "content": f"Comment {i}"
+        }
+        resp = api_client.post(f"/posts/comment/{post_id}", json=payload, headers=auth_headers)
+        assert resp.status_code == 200
+
+    response = api_client.get(f"/posts/comment_list/{post_id}?page=1&size=10", headers=auth_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert "comments" in data
+    assert "total" in data
+    assert data["total"] >= 3
+    assert len(data["comments"]) >= 3

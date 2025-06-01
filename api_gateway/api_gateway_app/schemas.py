@@ -28,7 +28,23 @@ class PostResponse(BaseModel):
     updated_at: datetime
     is_private: bool
     tags: List[str]
+    likes_count: int
+    views_count: int
 
 class PostListResponse(BaseModel):
     posts: List[PostResponse]
+    total: int
+
+class CommentCreate(BaseModel):
+    content: str
+
+class CommentResponse(BaseModel):
+    id: int
+    post_id: int
+    user_id: int
+    content: str
+    created_at: datetime
+
+class CommentListResponse(BaseModel):
+    comments: List[CommentResponse]
     total: int
