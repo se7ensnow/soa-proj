@@ -100,7 +100,7 @@ def register_and_login(api_client, username, email="test@example.com", password=
 
 def test_get_user_profile(api_client):
     user_id, token = register_and_login(api_client, "profileuser", "profile@example.com")
-    response = api_client.get(f"/users/{user_id}")
+    response = api_client.get(f"/users/get/{user_id}")
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == user_id
@@ -108,7 +108,7 @@ def test_get_user_profile(api_client):
     assert data["email"] == "profile@example.com"
 
 def test_get_user_invalid_id(api_client):
-    response = api_client.get("/users/999999")
+    response = api_client.get("/users/get/999999")
     assert response.status_code == 404
     assert "User not found" in response.text
 
