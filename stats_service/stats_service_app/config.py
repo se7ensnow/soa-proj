@@ -1,0 +1,10 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
+CLICKHOUSE_HOST = os.getenv('CLICKHOUSE_HOST')
+CLICKHOUSE_PORT = os.getenv('CLICKHOUSE_PORT')
+CLICKHOUSE_USER = os.getenv('CLICKHOUSE_USER')
+CLICKHOUSE_PASSWORD = os.getenv('CLICKHOUSE_PASSWORD')
