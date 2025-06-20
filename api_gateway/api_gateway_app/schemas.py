@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, date
+
 
 class PostCreate(BaseModel):
     title: str
@@ -48,3 +49,22 @@ class CommentResponse(BaseModel):
 class CommentListResponse(BaseModel):
     comments: List[CommentResponse]
     total: int
+
+class PostStatsResponse(BaseModel):
+    views: int
+    likes: int
+    comments: int
+
+class DailyStatItem(BaseModel):
+    date: date
+    count: int
+
+class TopEntityItem(BaseModel):
+    id: int
+    count: int
+
+class DailyStatResponse(BaseModel):
+    items: List[DailyStatItem]
+
+class TopEntitiesResponse(BaseModel):
+    items: List[TopEntityItem]

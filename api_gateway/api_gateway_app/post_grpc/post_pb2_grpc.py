@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import api_gateway_app.gateway_grpc.post_pb2 as post__pb2
+import api_gateway_app.post_grpc.post_pb2 as post__pb2
 
 GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__

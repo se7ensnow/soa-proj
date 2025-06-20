@@ -1,10 +1,10 @@
 import grpc
 from fastapi import APIRouter, Depends, HTTPException, Query
 from api_gateway_app.auth.dependencies import verify_token
-from api_gateway_app.gateway_grpc.gateway_client import get_post_stub
+from api_gateway_app.post_grpc.post_client import get_post_stub
 from api_gateway_app.schemas import PostResponse, PostUpdate, PostCreate, PostListResponse, ListPosts, \
     CommentListResponse, CommentResponse, CommentCreate
-from api_gateway_app.gateway_grpc import post_pb2
+from api_gateway_app.post_grpc import post_pb2
 from datetime import datetime
 
 GRPC_TO_HTTP_STATUS = {
